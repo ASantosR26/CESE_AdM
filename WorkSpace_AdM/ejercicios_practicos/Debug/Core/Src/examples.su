@@ -1,0 +1,4 @@
+../Core/Src/examples.c:13:6:zeros	24	static
+../Core/Src/examples.c:24:6:productoEscalar32	32	static
+../Core/Src/examples.c:35:6:productoEscalar16	32	static
+../Core/Src/examples.c:46:6:productoEscalar12	32	static
