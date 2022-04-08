@@ -77,9 +77,9 @@ Discarded input sections
  .text.productoEscalar16
                 0x0000000000000000       0x4c ./Core/Src/examples.o
  .text.productoEscalar12
-                0x0000000000000000       0x4c ./Core/Src/examples.o
- .debug_info    0x0000000000000000      0x240 ./Core/Src/examples.o
- .debug_abbrev  0x0000000000000000       0xa6 ./Core/Src/examples.o
+                0x0000000000000000       0x5c ./Core/Src/examples.o
+ .debug_info    0x0000000000000000      0x259 ./Core/Src/examples.o
+ .debug_abbrev  0x0000000000000000       0xb7 ./Core/Src/examples.o
  .debug_aranges
                 0x0000000000000000       0x38 ./Core/Src/examples.o
  .debug_ranges  0x0000000000000000       0x28 ./Core/Src/examples.o
@@ -119,8 +119,8 @@ Discarded input sections
  .debug_macro   0x0000000000000000      0x145 ./Core/Src/examples.o
  .debug_macro   0x0000000000000000      0x103 ./Core/Src/examples.o
  .debug_macro   0x0000000000000000      0x1df ./Core/Src/examples.o
- .debug_line    0x0000000000000000      0x654 ./Core/Src/examples.o
- .debug_str     0x0000000000000000     0x7d5b ./Core/Src/examples.o
+ .debug_line    0x0000000000000000      0x652 ./Core/Src/examples.o
+ .debug_str     0x0000000000000000     0x7d62 ./Core/Src/examples.o
  .comment       0x0000000000000000       0x51 ./Core/Src/examples.o
  .debug_frame   0x0000000000000000       0xb0 ./Core/Src/examples.o
  .ARM.attributes

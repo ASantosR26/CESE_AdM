@@ -47,7 +47,9 @@ void productoEscalar12(uint16_t * vectorIn, uint16_t * vectorOut, uint32_t longi
 {
 	for (uint32_t i = 0; i < longitud; i++)
 	{
-		*(vectorOut + i) = (*(vectorIn + i))*escalar;
+		uint16_t result = (*(vectorIn + i))*escalar;
+		if ( result > 0xFFF ){ result = 0xFFF; }
+		*(vectorOut + i) = result;
 	}
 }
 
