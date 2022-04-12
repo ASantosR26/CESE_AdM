@@ -19,11 +19,11 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "string.h"
-#include "examples.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "asm_func.h"
+#include "examples.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -62,21 +62,66 @@ static void MX_GPIO_Init(void);
 static void MX_ETH_Init(void);
 static void MX_USART3_UART_Init(void);
 static void MX_USB_OTG_FS_PCD_Init(void);
-
 /* USER CODE BEGIN PFP */
-void vPrintString( const char *pcString );
 
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-void vPrintString( const char *pcString )
+static void PrivilegiosSVC (void)
 {
-	/* Print the string*/
-	HAL_UART_Transmit( &huart3, (uint8_t *)pcString, (uint16_t) strlen((char *)pcString), 10 );
+    // Obtiene valor del registro de 32 bits del procesador llamado "control".
+    // El registro guarda los siguientes estados:
+    // bit 2: Uso de FPU en el contexto actual. Usado=1, no usado=0.
+    // bit 1: Mapeo del stack pointer(sp). MSP=0, PSP=1.
+    // bit 0: Modo de ejecucion en Thread. Privilegiado=0, No privilegiado=1.
+    //        Recordar que este valor solo se usa en modo Thread. Las
+    //        interrupciones siempre se ejecutan en modo Handler con total
+    //        privilegio.
+    uint32_t x = __get_CONTROL ();
 
+    // Actividad de debug: Ver registro "control" y valor de variable "x".
+    //__BKPT (0);
+
+    x |= 1;
+    // bit 0 a modo No privilegiado.
+    __set_CONTROL (x);
+
+    // En este punto se estaria ejecutando en modo No privilegiado.
+    // Lectura del registro "control" para confirmar.
+    x = __get_CONTROL ();
+
+    // Actividad de debug: Ver registro "control" y valor de variable "x".
+    //__BKPT (0);
+
+    x &= ~1u;
+    // Se intenta volver a modo Privilegiado (bit 0, valor 0).
+    __set_CONTROL (x);
+
+    // Confirma que esta operacion es ignorada por estar ejecutandose en modo
+    // Thread no privilegiado.
+    x = __get_CONTROL ();
+
+    // Actividad de debug: Ver registro "control" y valor de variable "x".
+    //__BKPT (0);
+
+    // En este punto, ejecutando en modo Thread no privilegiado, la unica forma
+    // de volver a modo privilegiado o de realizar cualquier cambio que requiera
+    // modo privilegiado, es pidiendo ese servicio a un hipotetico sistema
+    // opertivo de tiempo real.
+    // Para esto se invoca por software a la interrupcion SVC (Supervisor Call)
+    // utilizando la instruccion "svc".
+    // No hay intrinsics para realizar esta tarea. Para utilizar la instruccion
+    // es necesario implementar una funcion en assembler. Ver el archivo
+    // asm_func.S.
+    asm_svc ();
+
+    // El sistema operativo (el handler de SVC) deberia haber devuelto el modo
+    // de ejecucion de Thread a privilegiado (bit 0 en valor 0).
+    x = __get_CONTROL ();
+
+    // Fin del ejemplo de SVC
 }
-
 /* USER CODE END 0 */
 
 /**
@@ -110,11 +155,21 @@ int main(void)
   MX_ETH_Init();
   MX_USART3_UART_Init();
   MX_USB_OTG_FS_PCD_Init();
-
   /* USER CODE BEGIN 2 */
+  PrivilegiosSVC ();
 
-  vPrintString( "Main: Ejercicio Arquitectura de Microcontroladores.\r\n" );
+  //uint32_t vin[4] = { 1, 2, 3, 4090};
+  //uint32_t vout[4];
 
+  uint16_t vin[4] = { 1, 2, 3, 4090};
+  uint16_t vout[4];
+
+  //asm_productoEscalar32 (vin, vout, 4, 2);
+  //zeros (vin, 4);
+  asm_productoEscalar16 (vin, vout, 4, 2);
+  //asm_productoEscalar12 (vin, vout, 4, 2);
+
+  const uint32_t Resultado = asm_sum (5, 3);
   /* USER CODE END 2 */
 
   /* Infinite loop */
