@@ -156,20 +156,49 @@ int main(void)
   MX_USART3_UART_Init();
   MX_USB_OTG_FS_PCD_Init();
   /* USER CODE BEGIN 2 */
+
+  // 0xe0001000
+  DWT->CTRL |= 1 << DWT_CTRL_CYCCNTENA_Pos;
+  //DWT->CYCCNT = 0;
+  // 00010002
+  // 01000200
+
   PrivilegiosSVC ();
 
-  //uint32_t vin[4] = { 1, 2, 3, 4090};
-  //uint32_t vout[4];
+  uint32_t vin_32u[11] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 4000};
+  uint32_t vout_32u[11];
 
-  uint16_t vin[4] = { 1, 2, 3, 4090};
-  uint16_t vout[4];
+  int32_t vin_32s[11] = { 1, 2, 3, -4000, 5, 1200000, 7, 8, 9, 10, 4000};
+  int32_t vout_32s[11];
 
-  //asm_productoEscalar32 (vin, vout, 4, 2);
+  uint16_t vin_16u[11] = { 1, 2, 3, 4, 5, 6, 7, 8, 900, 10, 11};
+  uint16_t vout_16u[11];
+
+  int16_t vout_16s[11];
+
+  filtroVentana10(vin_16u, vout_16u, 11);
+  asm_filtroVentana10(vin_16u, vout_16u, 11);
+
+  pack32to16(vin_32s, vout_16s, 11);
+  asm_pack32to16(vin_32s, vout_16s, 11);
+
+  int32_t index = max(vin_32s, 11);
+  index = asm_max(vin_32s, 11);
+
+  //downsampleM(vin_32s, vout_32s, 11, 4);
+  asm_downsampleM(vin_32s, vout_32s, 11, 4);
+
+  invertir(vin_16u, 11);
+  asm_invertir(vin_16u, 11);
+  //asm_productoEscalar32 (vin_32u, vout_32u, 11, 2);
   //zeros (vin, 4);
-  asm_productoEscalar16 (vin, vout, 4, 2);
+  //DWT->CYCCNT = 0;
+  //asm_productoEscalar16 (vin, vout, 4, 2);
+  //volatile uint32_t c = DWT->CYCCNT;
   //asm_productoEscalar12 (vin, vout, 4, 2);
 
-  const uint32_t Resultado = asm_sum (5, 3);
+  //c = DWT->CYCCNT;
+  //const uint32_t Resultado = asm_sum (5, 3);
   /* USER CODE END 2 */
 
   /* Infinite loop */
